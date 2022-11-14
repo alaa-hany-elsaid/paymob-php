@@ -9,7 +9,7 @@
  * Time: 11:49 PM
  */
 
-namespace AlaaHany\Paymob;
+namespace Alaa\Paymob;
 
 class Routes
 {
