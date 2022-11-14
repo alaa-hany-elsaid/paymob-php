@@ -1,0 +1,21 @@
+{
+    "name": "alaa/paymob-php",
+    "description": "PHP Integration with  Paymob payment gateway in general. It can be used with laravel, codeigniter or PHP native",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Alaa\\Paymob\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alaa Elsaid",
+            "email": "elboray.alaa1@icloud.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "guzzlehttp/guzzle": "^7.0"
+    }
+}
