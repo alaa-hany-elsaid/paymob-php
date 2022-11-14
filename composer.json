@@ -1,11 +1,11 @@
 {
-    "name": "alaa/paymob-php",
+    "name": "alaa-hany/paymob-php",
     "description": "PHP Integration with  Paymob payment gateway in general. It can be used with laravel, codeigniter or PHP native",
     "type": "library",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "AlaaHany\\Paymob\\": "src/"
+            "Alaa\\Paymob\\": "src/"
         }
     },
     "authors": [
