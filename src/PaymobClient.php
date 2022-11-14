@@ -13,13 +13,12 @@ namespace Alaa\Paymob;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use Psr\Http\Message\ResponseInterface;
 
 class PaymobClient
 {
 
-    public const VERSION = "1.0.0";
-    private Client $client;
+     const VERSION = "1.0.0";
+    private  $client;
 
 
     public function __construct()
@@ -91,7 +90,7 @@ class PaymobClient
     /**
      * @return Client
      */
-    public function getGClient(): Client
+    public function getGClient()
     {
         return $this->client;
     }
@@ -110,7 +109,7 @@ class PaymobClient
     /**
      * @throws GuzzleException
      */
-    public function request($method, $uri, $options = []): ResponseInterface
+    public function request($method, $uri, $options = [])
     {
         return $this->getGClient()->request($method, $uri, $options);
 

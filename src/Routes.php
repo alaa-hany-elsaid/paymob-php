@@ -13,9 +13,9 @@ namespace Alaa\Paymob;
 
 class Routes
 {
-    public const Base = " https://accept.paymob.com/api/";
-    public const  Authentication = "auth/tokens";
-    public const  Order_Registration = "ecommerce/orders";
-    public const  Payment_Key_Request = "acceptance/payment_keys";
-    public const  Payment = "acceptance/payments/pay";
+    const Base = " https://accept.paymob.com/api/";
+    const  Authentication = "auth/tokens";
+    const  Order_Registration = "ecommerce/orders";
+    const  Payment_Key_Request = "acceptance/payment_keys";
+    const  Payment = "acceptance/payments/pay";
 }
