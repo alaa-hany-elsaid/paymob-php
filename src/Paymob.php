@@ -9,7 +9,7 @@
  * Time: 1:20 AM
  */
 
-namespace Alaa\Paymob;
+namespace AlaaHany\Paymob;
 
 use GuzzleHttp\Exception\GuzzleException;
 use  Exception;
