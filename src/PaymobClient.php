@@ -75,7 +75,6 @@ class PaymobClient
                 "integration_id" => $integration_id,
                 "billing_data" => $billing_data,
                 "expiration" => 60 * 30,
-                "amount_cents" => 0,
                 "currency" => "EGP",
             ], $info)
         ])->token;

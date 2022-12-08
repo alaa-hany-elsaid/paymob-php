@@ -11,8 +11,8 @@
 
 namespace Alaa\Paymob;
 
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
-use  Exception;
 
 class Paymob
 {
@@ -22,24 +22,6 @@ class Paymob
         "token" => null,
         "created_at" => 0
     ];
-
-
-    /**
-     * @param PaymobClient $paymobClient
-     */
-    public static function setPaymobClient(PaymobClient $paymobClient)
-    {
-        self::$paymobClient = $paymobClient;
-    }
-
-    /**
-     * @return PaymobClient
-     */
-    public static function getPaymobClient()
-    {
-        if (self::$paymobClient == null) self::$paymobClient = new PaymobClient();
-        return self::$paymobClient;
-    }
 
     /**
      * @return array
@@ -57,6 +39,40 @@ class Paymob
         self::$config = $config;
     }
 
+    /**
+     * @throws GuzzleException
+     * @throws Exception
+     */
+    public static function card($amount, $billing_data, $items = [], $delivery_needed = false, $additional_info = [], $lock_order_when_paid = false)
+    {
+        if (!(isset(self::$config['cards_iframe']) || isset(self::$config['default_iframe']))) throw  new Exception("please set a valid cards iframe or default iframe");
+        if (!(isset(self::$config['card_integration']))) throw  new Exception("please set a valid card_integration");
+        $res = self::generatePaymentKeyWithOrderId(self::$config['card_integration'], $billing_data, $amount, $items, $delivery_needed, $additional_info, $lock_order_when_paid);
+        $res["url"] = "https://accept.paymobsolutions.com/api/acceptance/iframes/" . (isset(self::$config['cards_iframe']) ? self::$config['cards_iframe'] : self::$config['default_iframe']) . "?payment_token=" . $res["payment_key"];
+        return $res;
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    private static function generatePaymentKeyWithOrderId($integration_id, $billing_data, $amount, $items = [], $delivery_needed = false, $additional_info = [], $lock_order_when_paid = false)
+    {
+        $order = self::getPaymobClient()->registerOrder(self::getAuthToken(), array_merge([
+            "amount_cents" => $amount,
+            "items" => $items,
+            "delivery_needed" => $delivery_needed,
+
+        ], $additional_info));
+        return ["payment_key" => self::getPaymobClient()->generatePaymentKey(self::getAuthToken(), $order->id, $integration_id, $billing_data, [
+            "amount_cents" => $amount,
+            "expiration" => isset(self::$config["expiration"]) ? self::$config["expiration"] : 60 * 30,
+            "currency" => isset(self::$config['currency']) ? self::$config['currency'] : "EGP",
+            "lock_order_when_paid" => $lock_order_when_paid
+        ]),
+            "order_id" => $order->id
+
+        ];
+    }
 
     /**
      * @return string
@@ -75,18 +91,21 @@ class Paymob
     }
 
     /**
-     * @throws GuzzleException
-     * @throws Exception
+     * @return PaymobClient
      */
-    public static function card($amount, $billing_data, $items = [], $delivery_needed = false, $additional_info = [], $lock_order_when_paid = false)
+    public static function getPaymobClient()
     {
-        if (!(isset(self::$config['cards_iframe']) || isset(self::$config['default_iframe']))) throw  new Exception("please set a valid cards iframe or default iframe");
-        if (!(isset(self::$config['card_integration']))) throw  new Exception("please set a valid card_integration");
-        $res = self::generatePaymentKeyWithOrderId(self::$config['card_integration'], $billing_data, $amount, $items, $delivery_needed, $additional_info, $lock_order_when_paid);
-        $res["url"] = "https://accept.paymobsolutions.com/api/acceptance/iframes/" . ( isset(self::$config['cards_iframe']) ? self::$config['cards_iframe'] : self::$config['default_iframe']) . "?payment_token=" . $res["payment_key"];
-        return $res;
+        if (self::$paymobClient == null) self::$paymobClient = new PaymobClient();
+        return self::$paymobClient;
     }
 
+    /**
+     * @param PaymobClient $paymobClient
+     */
+    public static function setPaymobClient(PaymobClient $paymobClient)
+    {
+        self::$paymobClient = $paymobClient;
+    }
 
     /**
      * @throws GuzzleException
@@ -109,28 +128,14 @@ class Paymob
         return $res;
     }
 
-
-    /**
-     * @throws GuzzleException
-     */
-    private static function generatePaymentKeyWithOrderId($integration_id, $billing_data, $amount, $items = [], $delivery_needed = false, $additional_info = [], $lock_order_when_paid = false)
-    {
-        $order = self::getPaymobClient()->registerOrder(self::getAuthToken(), array_merge([
-            "amount_cents" => $amount,
-            "items" => $items,
-            "delivery_needed" => $delivery_needed,
-
-        ], $additional_info));
-        return ["payment_key" => self::getPaymobClient()->generatePaymentKey(self::getAuthToken(), $order->id, $integration_id, $billing_data, [
-            "amount" => $amount,
-            "expiration" => isset(self::$config["expiration"]) ?self::$config["expiration"]  : 60 * 30,
-            "currency" => isset(self::$config['currency']) ? self::$config['currency'] :  "EGP",
-            "lock_order_when_paid" => $lock_order_when_paid
-        ]),
-            "order_id" => $order->id
-
-        ];
-    }
+//
+//    public static function validateTransactionCallback($transaction)
+//    {
+//
+//        if (!isset(self::$config['HMAC'])) throw  new Exception("please set a HMAC to validate transaction");
+//
+//
+//    }
 
 
 }
